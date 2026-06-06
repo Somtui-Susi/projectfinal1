@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="120dp"
+    android:height="120dp"
+    android:viewportWidth="100"
+    android:viewportHeight="100">
+
+    <!-- Outer Glow Circle (Soft) -->
+    <path
+        android:fillColor="#1A38BDF8"
+        android:pathData="M50,50m-45,0a45,45 0,1 1,90 0a45,45 0,1 1,-90 0" />
+
+    <!-- Main Brain Shape Left (Purple) -->
+    <path
+        android:fillColor="#7C3AED"
+        android:pathData="M48,30C38,30 30,38 30,48C30,55 34,61 40,64L40,75C40,77 42,79 44,79L48,79L48,30Z" />
+
+    <!-- Main Brain Shape Right (Blue - The 'Mirror' or AI side) -->
+    <path
+        android:fillColor="#38BDF8"
+        android:pathData="M52,30C62,30 70,38 70,48C70,55 66,61 60,64L60,75C60,77 58,79 56,79L52,79L52,30Z" />
+
+    <!-- Connection Line / Circuit (The "Mirror" Effect) -->
+    <path
+        android:strokeColor="#FFFFFF"
+        android:strokeWidth="1.5"
+        android:pathData="M50,25L50,85" />
+
+    <!-- Intelligence Dots (Neural nodes) -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M40,40m-2,0a2,2 0,1 1,4 0a2,2 0,1 1,-4 0
+                        M60,45m-2,0a2,2 0,1 1,4 0a2,2 0,1 1,-4 0
+                        M42,55m-2,0a2,2 0,1 1,4 0a2,2 0,1 1,-4 0
+                        M58,60m-2,0a2,2 0,1 1,4 0a2,2 0,1 1,-4 0" />
+</vector>
