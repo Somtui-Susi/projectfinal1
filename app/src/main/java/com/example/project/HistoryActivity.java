@@ -46,8 +46,9 @@ public class HistoryActivity extends AppCompatActivity {
             String topic = cursor.getString(1);
             String score = cursor.getString(2);
             String date = cursor.getString(3);
+            String details = cursor.getString(4); // 🔥 ดึง JSON เฉลยจาก Column ที่ 4
 
-            historyList.add(new HistoryItem(id, topic, score, date));
+            historyList.add(new HistoryItem(id, topic, score, date, details));
         }
 
         if (adapter == null) {

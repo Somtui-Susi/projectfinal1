@@ -16,6 +16,9 @@ public class ReviewActivity extends AppCompatActivity {
     TextView tvReview;
     ArrayList<QuestionResult> list;
 
+    // 🔥 เพิ่มตัวแปร Static สำหรับรับข้อมูลขนาดใหญ่
+    public static ArrayList<QuestionResult> dataStore;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -23,19 +26,22 @@ public class ReviewActivity extends AppCompatActivity {
 
         tvReview = findViewById(R.id.tvReview);
 
-        String json = getIntent().getStringExtra("data");
-
-        if (json == null) {
-            tvReview.setText("ไม่พบข้อมูลเฉลย");
-            return;
+        // 1. ลองดึงจาก Static ก่อน (วิธีใหม่ - ปลอดภัย)
+        if (dataStore != null) {
+            list = dataStore;
+            dataStore = null; // เคลียร์ทิ้งหลังใช้เสร็จเพื่อประหยัด RAM
+        } 
+        // 2. ถ้าไม่มี ค่อยดึงจาก Intent (วิธีเก่า - สำรอง)
+        else {
+            String json = getIntent().getStringExtra("data");
+            if (json != null) {
+                Type type = new TypeToken<ArrayList<QuestionResult>>(){}.getType();
+                list = new Gson().fromJson(json, type);
+            }
         }
 
-        Type type = new TypeToken<ArrayList<QuestionResult>>(){}.getType();
-
-        list = new Gson().fromJson(json, type);
-
         if (list == null || list.isEmpty()) {
-            tvReview.setText("ไม่มีข้อมูลเฉลย");
+            tvReview.setText("ไม่พบข้อมูลเฉลย");
             return;
         }
 
@@ -43,32 +49,47 @@ public class ReviewActivity extends AppCompatActivity {
     }
 
     void showReview() {
-
         StringBuilder sb = new StringBuilder();
 
-        for (QuestionResult q : list) {
+        for (int i = 0; i < list.size(); i++) {
+            QuestionResult q = list.get(i);
+            if (q == null) continue;
 
-            sb.append("❓ ").append(q.getQuestion()).append("\n");
+            sb.append("ข้อที่ ").append(i + 1).append(": ").append(q.getQuestion()).append("\n\n");
 
-            sb.append("A) ").append(q.getOptions()[0]).append("\n");
-            sb.append("B) ").append(q.getOptions()[1]).append("\n");
-            sb.append("C) ").append(q.getOptions()[2]).append("\n");
-            sb.append("D) ").append(q.getOptions()[3]).append("\n\n");
+            String[] options = q.getOptions();
+            if (options != null) {
+                for (int j = 0; j < options.length; j++) {
+                    String prefix = (char) ('A' + j) + ") ";
+                    sb.append(prefix).append(options[j]).append("\n");
+                }
+                sb.append("\n");
 
-            sb.append("✔ คำตอบที่ถูก: ")
-                    .append(q.getOptions()[q.getCorrectAnswer()])
-                    .append("\n");
+                // ตรวจสอบ Index ป้องกันแอปค้าง
+                int correctIdx = q.getCorrectAnswer();
+                int userIdx = q.getUserAnswer();
 
-            sb.append("👤 คำตอบคุณ: ")
-                    .append(q.getOptions()[q.getUserAnswer()]);
+                if (correctIdx >= 0 && correctIdx < options.length) {
+                    sb.append("✔ คำตอบที่ถูก: ").append(options[correctIdx]).append("\n");
+                } else {
+                    sb.append("✔ คำตอบที่ถูก: [ข้อมูลไม่ถูกต้อง]\n");
+                }
 
-            if (q.getUserAnswer() == q.getCorrectAnswer()) {
-                sb.append(" ✅ ถูก\n\n");
+                if (userIdx >= 0 && userIdx < options.length) {
+                    sb.append("👤 คำตอบของคุณ: ").append(options[userIdx]);
+                    if (userIdx == correctIdx) {
+                        sb.append(" ✅ (ถูกต้อง)\n");
+                    } else {
+                        sb.append(" ❌ (ผิด)\n");
+                    }
+                } else {
+                    sb.append("👤 คำตอบของคุณ: [ไม่ได้เลือกตอบ]\n");
+                }
             } else {
-                sb.append(" ❌ ผิด\n\n");
+                sb.append("[ไม่พบตัวเลือกคำตอบ]\n");
             }
 
-            sb.append("----------------------\n\n");
+            sb.append("\n----------------------------------\n\n");
         }
 
         tvReview.setText(sb.toString());

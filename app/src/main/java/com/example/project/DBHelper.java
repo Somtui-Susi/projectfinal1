@@ -9,7 +9,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 public class DBHelper extends SQLiteOpenHelper {
 
     public DBHelper(Context context) {
-        super(context, "exam.db", null, 1);
+        super(context, "exam.db", null, 2); // 🔥 อัปเกรดเป็นเวอร์ชัน 2 เพื่อให้โครงสร้างตารางใหม่ทำงาน
     }
 
     @Override
@@ -18,7 +18,8 @@ public class DBHelper extends SQLiteOpenHelper {
                 "id INTEGER PRIMARY KEY AUTOINCREMENT," +
                 "topic TEXT," +
                 "score TEXT," +
-                "date TEXT)");
+                "date TEXT," +
+                "details TEXT)"); // 🔥 เพิ่มคอลัมน์เก็บข้อมูลเฉลย
     }
 
     @Override
@@ -27,14 +28,15 @@ public class DBHelper extends SQLiteOpenHelper {
         onCreate(db);
     }
 
-    // 🔥 INSERT (บันทึกข้อมูล)
-    public void insertHistory(String topic, String score, String date) {
+    // บันทึกข้อมูล
+    public void insertHistory(String topic, String score, String date, String details) {
         SQLiteDatabase db = this.getWritableDatabase();
 
         ContentValues values = new ContentValues();
         values.put("topic", topic);
         values.put("score", score);
         values.put("date", date);
+        values.put("details", details); // 🔥 บันทึก JSON เฉลยลงไปด้วย
 
         db.insert("history", null, values);
     }
@@ -43,7 +45,7 @@ public class DBHelper extends SQLiteOpenHelper {
         db.delete("history", "id=?", new String[]{String.valueOf(id)});
     }
 
-    // 🔥 SELECT (ดึงข้อมูล)
+    //ดึงข้อมูล
     public Cursor getAllHistory() {
         SQLiteDatabase db = this.getReadableDatabase();
         return db.rawQuery("SELECT * FROM history ORDER BY id DESC", null);

@@ -7,25 +7,26 @@ import java.util.Locale;
 
 public class HistoryManager {
 
-    public static void saveHistory(QuizActivity activity, String content, int score, int total) {
+    public static void saveHistory(QuizActivity activity, String content, int score, int total, String detailsJson) {
 
-        // 🔥 กำหนด Topic (ย่อถ้าเกิน 30 ตัวอักษร)
+        // กำหนด Topic (ย่อถ้าเกิน 30 ตัวอักษร)
         String topic = content.length() > 30
                 ? content.substring(0, 30)
                 : content;
 
-        // 🔥 วันที่ปัจจุบัน
+        // วันที่ปัจจุบัน
         String date = new SimpleDateFormat(
                 "dd/MM/yyyy HH:mm",
                 Locale.getDefault()
         ).format(new Date());
 
-        // 🔥 บันทึกลง SQLite
+        // บันทึกลง SQLite (พร้อมรายละเอียดเฉลย)
         DBHelper db = new DBHelper(activity);
         db.insertHistory(
                 topic,
                 score + "/" + total,
-                date
+                date,
+                detailsJson
         );
     }
 }

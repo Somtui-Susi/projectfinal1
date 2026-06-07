@@ -98,10 +98,13 @@ public class QuizActivity extends AppCompatActivity {
     // ================= SHOW SCORE =================
     private void showScore() {
 
-        // 1. บันทึกประวัติ
-        HistoryManager.saveHistory(this, content, score, questions.size());
+        // 1. แปลงเฉลยเป็น JSON
+        String detailsJson = new Gson().toJson(reviewList);
 
-        // 2. ปรับ UI โชว์คะแนน
+        // 2. บันทึกประวัติพร้อมรายละเอียด
+        HistoryManager.saveHistory(this, content, score, questions.size(), detailsJson);
+
+        // 3. ปรับ UI โชว์คะแนน
         tvQuestion.setText("🎉 เก่งมาก! ทำแบบทดสอบเรียบร้อยแล้ว\n\nคะแนนที่ได้: " + score + " / " + questions.size());
         rgAnswers.setVisibility(View.GONE);
 
@@ -117,9 +120,10 @@ public class QuizActivity extends AppCompatActivity {
         // 4. ปุ่มดูเฉลย
         btnReview.setVisibility(View.VISIBLE);
         btnReview.setOnClickListener(v -> {
+            // 🔥 ฝากข้อมูลก้อนใหญ่ไว้ในตัวแปร Static
+            ReviewActivity.dataStore = reviewList;
+            
             Intent intent = new Intent(this, ReviewActivity.class);
-            String json = new Gson().toJson(reviewList);
-            intent.putExtra("data", json);
             startActivity(intent);
         });
     }

@@ -33,7 +33,6 @@ public class InputActivity extends AppCompatActivity {
     private Button btnChooseFile, btnAnalyze, btnRemoveFile;
     private View cardFilePreview;
     private TextView tvFileName;
-
     private String extractedText = "";
 
     @Override
@@ -62,14 +61,14 @@ public class InputActivity extends AppCompatActivity {
             Intent intent =
                     new Intent(Intent.ACTION_OPEN_DOCUMENT);
             
-            intent.addCategory(Intent.CATEGORY_OPENABLE); // เพิ่มเพื่อให้เลือกไฟล์ที่เปิดได้จริงเท่านั้น
+            intent.addCategory(Intent.CATEGORY_OPENABLE);
             intent.setType("*/*");
 
             String[] mimeTypes = {
                     "application/pdf",
                     "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
                     "application/vnd.openxmlformats-officedocument.presentationml.presentation",
-                    "text/plain" // เพิ่มไฟล์ Text ธรรมดาเพื่อให้ทดสอบง่ายขึ้นด้วยครับ
+                    "text/plain" // Text
             };
 
             intent.putExtra(

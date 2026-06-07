@@ -1,10 +1,12 @@
 package com.example.project;
 
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -38,7 +40,22 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.ViewHold
         holder.tvScore.setText(item.getScore());
         holder.tvDate.setText(item.getDate());
 
-        // 🔥 ปุ่มลบ (เวอร์ชันใช้งานจริง)
+        // 🔥 กดที่รายการประวัติเพื่อดูเฉลยย้อนหลัง
+        holder.itemView.setOnClickListener(v -> {
+            String details = item.getDetails();
+            if (details != null && !details.isEmpty()) {
+                Intent intent = new Intent(v.getContext(), ReviewActivity.class);
+                // ส่งข้อมูลเฉลยผ่าน Static (ใช้เมธอดที่เราทำไว้ก่อนหน้านี้เพื่อความเสถียร)
+                // เนื่องจากใน ReviewActivity เราใช้ระบบ Static เพื่อกันแอปค้าง
+                ReviewActivity.dataStore = null; 
+                intent.putExtra("data", details); 
+                v.getContext().startActivity(intent);
+            } else {
+                Toast.makeText(v.getContext(), "รายการนี้ไม่มีข้อมูลเฉลย (ข้อมูลเก่า)", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        // ลบจ้าาา
         holder.btnDelete.setOnClickListener(v -> {
 
             int pos = holder.getAdapterPosition();
@@ -48,13 +65,13 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.ViewHold
 
             DBHelper dbHelper = new DBHelper(v.getContext());
 
-            // 🔥 ลบจาก SQLite
+            // ลบจากSQLite
             dbHelper.deleteHistory(currentItem.getId());
 
-            // 🔥 ลบจาก list
+            // ลบจากlist
             historyList.remove(pos);
 
-            // 🔥 อัปเดต RecyclerView
+            // อัปเดตRecyclerView
             notifyItemRemoved(pos);
             notifyItemRangeChanged(pos, historyList.size());
         });
@@ -65,7 +82,7 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.ViewHold
         return historyList.size();
     }
 
-    // ================= ViewHolder =================
+    //ViewHolder
     public static class ViewHolder extends RecyclerView.ViewHolder {
 
         TextView tvTopic, tvScore, tvDate;
